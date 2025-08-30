@@ -31,3 +31,9 @@ jobs:
 
       - name: Build ChatUtils
         run: mvn -B clean package
+
+      - name: Upload Jar artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ChatUtils-Jar
+          path: target/ChatUtils.jar
