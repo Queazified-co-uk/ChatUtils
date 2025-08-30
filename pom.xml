@@ -10,7 +10,7 @@
     <packaging>jar</packaging>
 
     <name>ChatUtils</name>
-    <description>Plugin for sharing items in chat</description>
+    <description>Plugin for sharing items in chat with hover tooltips</description>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -19,7 +19,7 @@
     </properties>
 
     <dependencies>
-        <!-- Paper API -->
+        <!-- Paper API (includes Adventure) -->
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
@@ -27,7 +27,14 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- PlaceholderAPI (local jar in libs/) -->
+        <!-- Optional: MiniMessage for advanced formatting -->
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-text-minimessage</artifactId>
+            <version>4.14.0</version>
+        </dependency>
+
+        <!-- PlaceholderAPI (local jar) -->
         <dependency>
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
