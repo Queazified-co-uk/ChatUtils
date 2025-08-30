@@ -29,19 +29,5 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Download PlaceholderAPI
-        run: |
-          mkdir -p libs
-          curl -L -o libs/PlaceholderAPI-2.11.3.jar https://api.spigotmc.org/versions/placeholderapi/2.11.3/PlaceholderAPI.jar
-
-      - name: Install PlaceholderAPI locally
-        run: |
-          mvn install:install-file \
-            -Dfile=libs/PlaceholderAPI-2.11.3.jar \
-            -DgroupId=me.clip \
-            -DartifactId=placeholderapi \
-            -Dversion=2.11.3 \
-            -Dpackaging=jar
-
       - name: Build ChatUtils
         run: mvn -B clean package
