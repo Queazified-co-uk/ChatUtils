@@ -2,7 +2,6 @@ package com.queazified.chatutils;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.entity.Player;
@@ -15,8 +14,11 @@ import java.util.List;
 public class ChatUtils {
 
     /**
-     * Sends an item in chat with hover showing full item info.
+     * Sends the item in the player's hand to chat with hover showing full item info.
      * Displays: [Rank] Player: is holding [Item]
+     *
+     * @param player The player sending the item
+     * @param rank   The player's rank to display in chat
      */
     public static void sendItemWithHover(Player player, String rank) {
         ItemStack item = player.getInventory().getItemInMainHand();
@@ -32,11 +34,13 @@ public class ChatUtils {
         Component hover = Component.text(itemName + "\n", TextColor.fromHexString("#FFAA00"));
 
         if (meta != null) {
-            // Enchantments
-            meta.getEnchants().forEach((enchant, level) ->
-                    hover = hover.append(Component.text(enchant.getKey().getKey() + " " + level + "\n", TextColor.fromHexString("#00FFAA"))));
+            // Add enchantments
+            for (Enchantment enchant : meta.getEnchants().keySet()) {
+                int level = meta.getEnchantLevel(enchant);
+                hover = hover.append(Component.text(enchant.getKey().getKey() + " " + level + "\n", TextColor.fromHexString("#00FFAA")));
+            }
 
-            // Lore
+            // Add lore
             if (meta.hasLore()) {
                 List<String> lore = meta.getLore();
                 for (String line : lore) {
@@ -45,13 +49,14 @@ public class ChatUtils {
             }
         }
 
-        // Full chat message
+        // Build the full chat message
         Component message = Component.text("[" + rank + "] ", TextColor.fromHexString("#FFA500"))
                 .append(Component.text(player.getName(), NamedTextColor.YELLOW))
                 .append(Component.text(" is holding ", NamedTextColor.WHITE))
                 .append(Component.text("[" + itemName + "]", TextColor.fromHexString("#FFAA00"))
                         .hoverEvent(HoverEvent.showText(hover)));
 
+        // Send message to the player
         player.sendMessage(message);
     }
 }
