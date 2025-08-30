@@ -1,0 +1,18 @@
+name: ChatUtils
+version: 1.0.0
+main: com.queazified.chatutils.ChatUtils
+api-version: 1.19
+author: Queazified
+description: Simple chat utilities (e.g., share your held item in chat).
+website: https://queazified.co.uk
+
+commands:
+  hand:
+    description: Show the item in your hand to the chat
+    usage: /hand
+    permission: chatutils.hand
+
+permissions:
+  chatutils.hand:
+    description: Allows use of /hand
+    default: true
