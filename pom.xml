@@ -49,7 +49,7 @@
                 </configuration>
             </plugin>
 
-            <!-- Shade plugin (optional) -->
+            <!-- Shade plugin to produce ChatUtils.jar -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -61,6 +61,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <finalName>ChatUtils</finalName>
                             <minimizeJar>false</minimizeJar>
                         </configuration>
                     </execution>
