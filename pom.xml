@@ -19,7 +19,7 @@
     </properties>
 
     <dependencies>
-        <!-- Paper API (works for Spigot too) -->
+        <!-- Paper API -->
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
@@ -27,11 +27,11 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- PlaceholderAPI -->
+        <!-- PlaceholderAPI (installed locally during CI) -->
         <dependency>
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
-            <version>2.11.3</version> <!-- adjust if needed -->
+            <version>2.11.3</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -72,10 +72,6 @@
         <repository>
             <id>papermc-repo</id>
             <url>https://repo.papermc.io/repository/maven-public/</url>
-        </repository>
-        <repository>
-            <id>clip-repo</id>
-            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
     </repositories>
 
