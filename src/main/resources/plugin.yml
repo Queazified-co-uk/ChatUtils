@@ -1,5 +1,5 @@
 name: ChatUtils
-version: 1.1.0
+version: 1.1.1
 main: com.queazified.chatutils.ChatUtils
 api-version: 1.20
 author: Queazified
@@ -11,3 +11,8 @@ commands:
     description: Show the item in your hand to the chat
     usage: /hand
     permission: chatutils.hand
+
+permissions:
+  chatutils.hand:
+    description: Allows use of /hand
+    default: true
