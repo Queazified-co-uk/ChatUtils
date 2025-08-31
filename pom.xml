@@ -7,7 +7,7 @@
 
     <groupId>com.queazified</groupId>
     <artifactId>ChatUtils</artifactId>
-    <version>1.0.1</version>
+    <version>1.2.1</version>
     <packaging>jar</packaging>
 
     <name>ChatUtils</name>
