@@ -4,6 +4,7 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -38,9 +39,15 @@ public class ChatUtils extends JavaPlugin {
 
         ItemMeta meta = item.getItemMeta();
 
-        Component displayName = meta.hasDisplayName()
-                ? meta.displayName()
-                : Component.text(formatItemName(item.getType()), NamedTextColor.AQUA);
+        // Spigot-safe: getDisplayName() returns String
+        String itemName;
+        if (meta != null && meta.hasDisplayName()) {
+            itemName = meta.getDisplayName();
+        } else {
+            itemName = formatItemName(item.getType());
+        }
+
+        Component displayName = Component.text(itemName, NamedTextColor.AQUA);
 
         // Hover lines (lore, enchantments, etc.)
         List<Component> hoverLines = new ArrayList<>();
@@ -66,7 +73,10 @@ public class ChatUtils extends JavaPlugin {
                 .append(handMessage)
                 .append(Component.text(after));
 
-        Bukkit.broadcast(chatMessage);
+        // Convert Component → legacy (§ codes) for Spigot broadcast
+        String legacy = LegacyComponentSerializer.legacySection().serialize(chatMessage);
+        Bukkit.broadcastMessage(legacy);
+
         return true;
     }
 
