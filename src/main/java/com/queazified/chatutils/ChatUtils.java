@@ -1,62 +1,83 @@
 package com.queazified.chatutils;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.enchantments.Enchantment;
+import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class ChatUtils {
+public class ChatUtils extends JavaPlugin {
 
-    /**
-     * Sends the item in the player's hand to chat with hover showing full item info.
-     * Displays: [Rank] Player: is holding [Item]
-     *
-     * @param player The player sending the item
-     * @param rank   The player's rank to display in chat
-     */
-    public static void sendItemWithHover(Player player, String rank) {
+    @Override
+    public void onEnable() {
+        saveDefaultConfig();
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage("§7[§bChatUtils§7] §cOnly players can use this command!");
+            return true;
+        }
+
         ItemStack item = player.getInventory().getItemInMainHand();
-        if (item == null || item.getType().isAir()) {
-            player.sendMessage(Component.text("You are not holding any item!", NamedTextColor.RED));
-            return;
+        if (item == null || item.getType() == Material.AIR) {
+            player.sendMessage("§7[§bChatUtils§7] §cYou must be holding an item!");
+            return true;
         }
 
         ItemMeta meta = item.getItemMeta();
-        String itemName = (meta != null && meta.hasDisplayName()) ? meta.getDisplayName() : item.getType().name();
 
-        // Build hover text
-        Component hover = Component.text(itemName + "\n", TextColor.fromHexString("#FFAA00"));
+        Component displayName = meta.hasDisplayName()
+                ? meta.displayName()
+                : Component.text(formatItemName(item.getType()), NamedTextColor.AQUA);
 
-        if (meta != null) {
-            // Add enchantments
-            for (Enchantment enchant : meta.getEnchants().keySet()) {
-                int level = meta.getEnchantLevel(enchant);
-                hover = hover.append(Component.text(enchant.getKey().getKey() + " " + level + "\n", TextColor.fromHexString("#00FFAA")));
-            }
+        // Hover lines (lore, enchantments, etc.)
+        List<Component> hoverLines = new ArrayList<>();
+        hoverLines.add(displayName);
 
-            // Add lore
-            if (meta.hasLore()) {
-                List<String> lore = meta.getLore();
-                for (String line : lore) {
-                    hover = hover.append(Component.text(line + "\n", TextColor.fromHexString("#AAAAAA")));
-                }
-            }
+        Component hoverText = Component.join(Component.newline(), hoverLines);
+
+        Component itemComponent = displayName.color(NamedTextColor.AQUA)
+                .hoverEvent(HoverEvent.showText(hoverText));
+
+        // Build "is holding [item]" message
+        Component handMessage = Component.text("is holding ", NamedTextColor.YELLOW)
+                .append(itemComponent);
+
+        // Apply chat format (using PAPI for prefix, name, etc.)
+        String format = getConfig().getString("chat-format", "%luckperms_prefix% %player_name%: %message%");
+        String parsedFormat = PlaceholderAPI.setPlaceholders(player, format);
+
+        String before = parsedFormat.substring(0, parsedFormat.indexOf("%message%"));
+        String after = parsedFormat.substring(parsedFormat.indexOf("%message%") + 9);
+
+        Component chatMessage = Component.text(before)
+                .append(handMessage)
+                .append(Component.text(after));
+
+        Bukkit.broadcast(chatMessage);
+        return true;
+    }
+
+    private String formatItemName(Material mat) {
+        String[] parts = mat.toString().toLowerCase().split("_");
+        StringBuilder sb = new StringBuilder();
+        for (String part : parts) {
+            sb.append(Character.toUpperCase(part.charAt(0)))
+              .append(part.substring(1))
+              .append(" ");
         }
-
-        // Build the full chat message
-        Component message = Component.text("[" + rank + "] ", TextColor.fromHexString("#FFA500"))
-                .append(Component.text(player.getName(), NamedTextColor.YELLOW))
-                .append(Component.text(" is holding ", NamedTextColor.WHITE))
-                .append(Component.text("[" + itemName + "]", TextColor.fromHexString("#FFAA00"))
-                        .hoverEvent(HoverEvent.showText(hover)));
-
-        // Send message to the player
-        player.sendMessage(message);
+        return sb.toString().trim();
     }
 }
