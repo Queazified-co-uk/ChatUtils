@@ -1,0 +1,2 @@
+# Default chat format for ChatUtils
+chat-format: "%luckperms_prefix% %player_name%: %message%"
