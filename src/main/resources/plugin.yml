@@ -11,8 +11,15 @@ commands:
     description: Show the item in your hand to the chat
     usage: /hand
     permission: chatutils.hand
+  iteminfo:
+    description: Show detailed info about the item in your hand
+    usage: /iteminfo
+    permission: chatutils.iteminfo
 
 permissions:
   chatutils.hand:
     description: Allows use of /hand
     default: true
+  chatutils.iteminfo:
+    description: Allows use of /iteminfo
+    default: op

@@ -1,2 +1,3 @@
 # Default chat format for ChatUtils
-chat-format: "%luckperms_prefix% %player_name%: %message%"
+chat-format: "<gray>[<aqua>ChatUtils</aqua>] <yellow>%player_name%: %message%"
+hand-cooldown: 10 # seconds
