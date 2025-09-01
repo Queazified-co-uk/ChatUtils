@@ -1,3 +1,3 @@
 # Default chat format for ChatUtils
-chat-format: "<gray>[<aqua>ChatUtils</aqua>] <yellow>%player_name%: %message%"
+chat-format: "<#FF0000>[<#F50404>A<#EC0909>M<#E20D0D>I<#D91111>N<#CF1515>] <#B22222>%player_name%: %message%"
 hand-cooldown: 10 # seconds

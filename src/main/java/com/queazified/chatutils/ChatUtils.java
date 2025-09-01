@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import net.kyori.adventure.nbt.api.BinaryTagHolder;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 
 public class ChatUtils extends JavaPlugin {
 
@@ -93,14 +94,17 @@ public class ChatUtils extends JavaPlugin {
             }
             Component displayName = Component.text(itemName, NamedTextColor.AQUA).decorate(net.kyori.adventure.text.format.TextDecoration.BOLD);
 
-            // Use HoverEvent.showItem for native Minecraft tooltip
+            // Use HoverEvent.showItem for native Minecraft tooltip with NBT
             HoverEvent<ShowItem> hoverEvent = null;
             try {
+                // Get NBT as string using CraftItemStack
+                org.bukkit.inventory.ItemStack craftStack = CraftItemStack.asNMSCopy(item);
+                String nbtString = craftStack.save(new net.minecraft.nbt.NBTTagCompound()).toString();
                 net.kyori.adventure.text.event.HoverEvent.ShowItem showItem =
                     net.kyori.adventure.text.event.HoverEvent.ShowItem.of(
                         Key.key(item.getType().getKey().toString()),
                         item.getAmount(),
-                        null // No NBT, or use BinaryTagHolder.of(nbtString) if you have NBT
+                        BinaryTagHolder.of(nbtString)
                     );
                 hoverEvent = HoverEvent.showItem(showItem);
             } catch (Exception e) {
@@ -111,22 +115,19 @@ public class ChatUtils extends JavaPlugin {
                 itemComponent = itemComponent.hoverEvent(hoverEvent);
             }
 
-            Component prefix = Component.text("[", NamedTextColor.DARK_GRAY)
-                    .append(Component.text("ChatUtils", NamedTextColor.AQUA))
-                    .append(Component.text("] ", NamedTextColor.DARK_GRAY));
-            Component handMessage = Component.text("is holding ", NamedTextColor.YELLOW)
-                    .append(itemComponent);
-
-            // MiniMessage support for chat-format
+            // MiniMessage support for chat-format (prefix should be in config now)
+            FileConfiguration config = getConfig();
             String format = config.getString("chat-format", "<gray>[<aqua>ChatUtils</aqua>] <yellow>%player_name%: %message%");
             String parsedFormat = PlaceholderAPI.setPlaceholders(player, format);
-            String before = parsedFormat.substring(0, parsedFormat.indexOf("%message%"));
-            String after = parsedFormat.substring(parsedFormat.indexOf("%message%") + 9);
 
-            Component chatMessage = prefix
-                    .append(miniMessage.deserialize(before))
-                    .append(handMessage)
-                    .append(miniMessage.deserialize(after));
+            // Replace %message% with the hand message component
+            String[] parts = parsedFormat.split("%message%", 2);
+            Component chatMessage = miniMessage.deserialize(parts[0])
+                .append(Component.text("is holding ", NamedTextColor.YELLOW))
+                .append(itemComponent);
+            if (parts.length > 1) {
+                chatMessage = chatMessage.append(miniMessage.deserialize(parts[1]));
+            }
 
             // Send with Adventure for hex support
             adventure.all().sendMessage(chatMessage);
