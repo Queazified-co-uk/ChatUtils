@@ -24,6 +24,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import net.kyori.adventure.nbt.api.BinaryTagHolder;
 
 public class ChatUtils extends JavaPlugin {
 
@@ -98,8 +99,8 @@ public class ChatUtils extends JavaPlugin {
                 net.kyori.adventure.text.event.HoverEvent.ShowItem showItem =
                     net.kyori.adventure.text.event.HoverEvent.ShowItem.of(
                         Key.key(item.getType().getKey().toString()),
-                        (long) item.getAmount(),
-                        item.hasItemMeta() ? item.getItemMeta().getAsString() : null
+                        item.getAmount(),
+                        null // No NBT, or use BinaryTagHolder.of(nbtString) if you have NBT
                     );
                 hoverEvent = HoverEvent.showItem(showItem);
             } catch (Exception e) {
