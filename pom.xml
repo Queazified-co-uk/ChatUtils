@@ -33,6 +33,12 @@
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
+
+        <!-- Item-NBT-API repo -->
+        <repository>
+            <id>codemc-repo</id>
+            <url>https://repo.codemc.org/repository/maven-public/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -69,10 +75,10 @@
             <version>4.14.0</version>
         </dependency>
 
-        <!-- Item-NBT-API for NBT serialization -->
+        <!-- Use the correct artifact for Item-NBT-API -->
         <dependency>
             <groupId>de.tr7zw</groupId>
-            <artifactId>item-nbt-api-plugin</artifactId>
+            <artifactId>item-nbt-api</artifactId>
             <version>2.12.3</version>
             <scope>provided</scope>
         </dependency>
