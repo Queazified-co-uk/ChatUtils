@@ -68,6 +68,14 @@
             <artifactId>adventure-text-minimessage</artifactId>
             <version>4.14.0</version>
         </dependency>
+
+        <!-- Item-NBT-API for NBT serialization -->
+        <dependency>
+            <groupId>de.tr7zw</groupId>
+            <artifactId>item-nbt-api-plugin</artifactId>
+            <version>2.12.3</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

@@ -1,5 +1,6 @@
 package com.queazified.chatutils;
 
+import de.tr7zw.changeme.nbtapi.NBTItem;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
@@ -97,9 +98,8 @@ public class ChatUtils extends JavaPlugin {
             // Use HoverEvent.showItem for native Minecraft tooltip with NBT
             HoverEvent<ShowItem> hoverEvent = null;
             try {
-                // Get NBT as string using CraftItemStack
-                org.bukkit.inventory.ItemStack craftStack = CraftItemStack.asNMSCopy(item);
-                String nbtString = craftStack.save(new net.minecraft.nbt.NBTTagCompound()).toString();
+                NBTItem nbtItem = new NBTItem(item);
+                String nbtString = nbtItem.toString();
                 net.kyori.adventure.text.event.HoverEvent.ShowItem showItem =
                     net.kyori.adventure.text.event.HoverEvent.ShowItem.of(
                         Key.key(item.getType().getKey().toString()),
@@ -116,7 +116,6 @@ public class ChatUtils extends JavaPlugin {
             }
 
             // MiniMessage support for chat-format (prefix should be in config now)
-            FileConfiguration config = getConfig();
             String format = config.getString("chat-format", "<gray>[<aqua>ChatUtils</aqua>] <yellow>%player_name%: %message%");
             String parsedFormat = PlaceholderAPI.setPlaceholders(player, format);
 
@@ -179,4 +178,5 @@ public class ChatUtils extends JavaPlugin {
         }
         return sb.toString().trim();
     }
+}
 }
