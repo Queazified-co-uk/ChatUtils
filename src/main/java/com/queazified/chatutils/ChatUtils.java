@@ -21,6 +21,12 @@ public class ChatUtils extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        // Dependency check for PlaceholderAPI
+        if (getServer().getPluginManager().getPlugin("PlaceholderAPI") == null) {
+            getLogger().severe("PlaceholderAPI not found! Disabling ChatUtils.");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
         saveDefaultConfig();
     }
 
@@ -47,16 +53,41 @@ public class ChatUtils extends JavaPlugin {
             itemName = formatItemName(item.getType());
         }
 
-        Component displayName = Component.text(itemName, NamedTextColor.AQUA);
+        // Improved display name: bold & aqua
+        Component displayName = Component.text(itemName, NamedTextColor.AQUA).decorate(net.kyori.adventure.text.format.TextDecoration.BOLD);
 
-        // Hover lines (lore, enchantments, etc.)
+        // Build hover lines: display name, lore, enchantments
         List<Component> hoverLines = new ArrayList<>();
         hoverLines.add(displayName);
 
+        // Add lore if present
+        if (meta != null && meta.hasLore()) {
+            hoverLines.add(Component.text("")); // blank line
+            for (String loreLine : meta.getLore()) {
+                hoverLines.add(Component.text(loreLine, NamedTextColor.GRAY));
+            }
+        }
+
+        // Add enchantments if present
+        if (meta != null && meta.hasEnchants()) {
+            hoverLines.add(Component.text(""));
+            hoverLines.add(Component.text("Enchantments:", NamedTextColor.LIGHT_PURPLE));
+            meta.getEnchants().forEach((enchant, level) -> {
+                String enchName = enchant.getKey().getKey().replace('_', ' ');
+                enchName = enchName.substring(0, 1).toUpperCase() + enchName.substring(1).toLowerCase();
+                hoverLines.add(Component.text(" - " + enchName + " " + level, NamedTextColor.LIGHT_PURPLE));
+            });
+        }
+
         Component hoverText = Component.join(Component.newline(), hoverLines);
 
-        Component itemComponent = displayName.color(NamedTextColor.AQUA)
+        Component itemComponent = displayName
                 .hoverEvent(HoverEvent.showText(hoverText));
+
+        // Build improved prefix
+        Component prefix = Component.text("[", NamedTextColor.DARK_GRAY)
+                .append(Component.text("ChatUtils", NamedTextColor.AQUA))
+                .append(Component.text("] ", NamedTextColor.DARK_GRAY));
 
         // Build "is holding [item]" message
         Component handMessage = Component.text("is holding ", NamedTextColor.YELLOW)
@@ -69,7 +100,8 @@ public class ChatUtils extends JavaPlugin {
         String before = parsedFormat.substring(0, parsedFormat.indexOf("%message%"));
         String after = parsedFormat.substring(parsedFormat.indexOf("%message%") + 9);
 
-        Component chatMessage = Component.text(before)
+        Component chatMessage = prefix
+                .append(Component.text(before))
                 .append(handMessage)
                 .append(Component.text(after));
 
